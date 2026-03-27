@@ -1,0 +1,10 @@
+services:
+  letsacme:
+    image: ikidou/letsacme
+    container_name: letsacme
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./letsacme:/data"
+    restart: always
+    command: ["-https"]

@@ -1,0 +1,34 @@
+entryPoints:
+  # http:
+  #   address: ":80"
+  https:
+    address: ":8443"
+
+tls:
+  stores:
+    default:
+      defaultGeneratedCert:
+        resolver: letsacme
+
+certificatesResolvers:
+  letsacme:
+    acme:
+      email: "exapmle@exapmle.com"  
+      caServer: "https://letsacme.localhost:3000/acme/directory"
+      storage: "./traefik_store_letsacme.json"
+      keyType: EC256
+      dnsChallenge:
+        # export CF_DNS_API_TOKEN='letsacme_example'
+        provider: cloudflare
+
+providers:
+  file: 
+    directory: ./traefik_config/
+    watch: true
+
+api: 
+  insecure: true
+log:
+  format: common
+  # TRACE, DEBUG, INFO, WARN, ERROR, FATAL
+  level: INFO

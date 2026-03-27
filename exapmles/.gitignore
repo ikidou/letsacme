@@ -1,0 +1,6 @@
+/certbot/
+/acme.sh/
+/lego/
+
+# Traefik
+/traefik_store_letsacme.json

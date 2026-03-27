@@ -1,0 +1,9 @@
+*.exe
+/letsacme
+/__debug_bin*
+
+/*.crt
+/*.cer
+/*.csr
+/*.key
+/*.pem

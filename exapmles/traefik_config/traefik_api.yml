@@ -1,0 +1,21 @@
+# http routing section
+http:
+  routers:
+    # Define a connection between requests and services
+    traefik-dashboard:
+      entryPoints:
+        - http
+        - https
+      rule: "Host(`traefik.localhost`)"
+      tls:
+        certResolver: letsacme
+       # If the rule matches, applies the middleware
+      middlewares: {}
+      service: api@internal
+
+  # services:
+  #   # Define how to reach an existing service on our infrastructure
+    # traefik-dashboard:
+    #   loadBalancer:
+    #     servers:
+    #     - url: http://localhost:8080
