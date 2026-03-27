@@ -44,7 +44,7 @@ lego --server "https://localhost:3000/acme/directory" --email "example@example.c
 
 ## Caddy
 
-Visit [https://localhost/](https://localhost/)
+Visit [https://caddy.localhost:8443](https://caddy.localhost:8443)
 
 ```bash
 cd exapmles
