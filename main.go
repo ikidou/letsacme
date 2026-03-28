@@ -79,6 +79,9 @@ func main() {
 
 	http.HandleFunc("/account/default/orders", handleOrders)
 
+	http.HandleFunc("/acme/ca.crt", handleCACert)
+	http.HandleFunc("/", handleIndex)
+
 	log.Println("letsacme started, available at:")
 	if *https {
 		for _, dns := range serverCertPair.Cert.DNSNames {
@@ -298,6 +301,19 @@ func handleDownloadCert(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Replay-Nonce", randomString())
 	w.WriteHeader(http.StatusOK)
 	pem.Encode(w, &pem.Block{Type: "CERTIFICATE", Bytes: order.certContent})
+	pem.Encode(w, &pem.Block{Type: "CERTIFICATE", Bytes: caPair.Cert.Raw})
+}
+
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	base := getBaseURL(r)
+	w.Header().Set("Content-Type", "text/plain")
+	content := fmt.Sprintf("Acme Directory: %s/directory\nCA Certificate: %s/ca.crt", base, base)
+	io.WriteString(w, content)
+}
+
+func handleCACert(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/pem-certificate")
+	w.Header().Set("Content-Disposition", "attachment; filename=letsacme_ca.crt")
 	pem.Encode(w, &pem.Block{Type: "CERTIFICATE", Bytes: caPair.Cert.Raw})
 }
 
