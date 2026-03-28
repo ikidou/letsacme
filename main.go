@@ -79,6 +79,9 @@ func main() {
 
 	http.HandleFunc("/account/default/orders", handleOrders)
 
+	http.HandleFunc("/acme/ca.crt", handleCACert)
+	http.HandleFunc("/", handleIndex)
+
 	log.Println("letsacme started, available at:")
 	if *https {
 		for _, dns := range serverCertPair.Cert.DNSNames {
@@ -301,6 +304,19 @@ func handleDownloadCert(w http.ResponseWriter, r *http.Request) {
 	pem.Encode(w, &pem.Block{Type: "CERTIFICATE", Bytes: caPair.Cert.Raw})
 }
 
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	base := getBaseURL(r)
+	w.Header().Set("Content-Type", "text/plain")
+	content := fmt.Sprintf("Acme Directory: %s/directory\nCA Certificate: %s/ca.crt", base, base)
+	io.WriteString(w, content)
+}
+
+func handleCACert(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/pem-certificate")
+	w.Header().Set("Content-Disposition", "attachment; filename=letsacme_ca.crt")
+	pem.Encode(w, &pem.Block{Type: "CERTIFICATE", Bytes: caPair.Cert.Raw})
+}
+
 func renderJSON(w http.ResponseWriter, status int, v interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Replay-Nonce", randomString())
@@ -377,7 +393,7 @@ func initCA() {
 		log.Printf("server cert date range invalid %s - %s", serverCertPair.Cert.NotBefore.Format(time.RFC3339), serverCertPair.Cert.NotAfter.Format(time.RFC3339))
 	}
 
-	if len(serverCertPair.Cert.DNSNames) == 0 || len(serverCertPair.Cert.IPAddresses) == 0 {
-		log.Fatalf("server cert does not have DNSNames or IPAddresses")
+	if len(serverCertPair.Cert.DNSNames) == 0 && len(serverCertPair.Cert.IPAddresses) == 0 {
+		log.Fatalf("server cert does not have any DNSNames or IPAddresses")
 	}
 }
