@@ -393,7 +393,7 @@ func initCA() {
 		log.Printf("server cert date range invalid %s - %s", serverCertPair.Cert.NotBefore.Format(time.RFC3339), serverCertPair.Cert.NotAfter.Format(time.RFC3339))
 	}
 
-	if len(serverCertPair.Cert.DNSNames) == 0 || len(serverCertPair.Cert.IPAddresses) == 0 {
-		log.Fatalf("server cert does not have DNSNames or IPAddresses")
+	if len(serverCertPair.Cert.DNSNames) == 0 && len(serverCertPair.Cert.IPAddresses) == 0 {
+		log.Fatalf("server cert does not have any DNSNames or IPAddresses")
 	}
 }
