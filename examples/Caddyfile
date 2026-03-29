@@ -1,0 +1,16 @@
+{
+	email example@exapmle.com
+	# see https://caddyserver.com/docs/automatic-https#hostname-requirements
+	#acme_ca "http://localhost:3000/acme/directory"
+	#skip_install_trust
+	http_port 8088
+}
+
+# use 8443 port for testing 
+https://caddy.localhost:8443 https://*.caddy.localhost:8443 {
+	tls {
+		ca "https://letsacme.localhost:3000/acme/directory"
+		ca_root "./letsacme/acme_ca.crt"
+	}
+	respond "Hello From Caddy"
+}

@@ -1,0 +1,42 @@
+services:
+  letsacme:
+    image: ikidou/letsacme
+    ports:
+      - "3000:3000"
+      - "9080:9080"
+      - "9443:9443"
+      - "8443:8443"
+    volumes:
+      - "./letsacme:/data"
+    restart: always
+    command: ["-https"]
+
+  caddy:
+    image: caddy:2.11.2
+    # ports:
+      # - "8080:80"
+      # - "8443:8443"
+    volumes:
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+      # share Caddyfile config for cli and compose
+      - "./letsacme:/data/letsacme"
+    working_dir: /data
+    restart: always
+    # share config between cli and compose, because Caddyfile use letsacme.localhost:3000 to access letsacme
+    network_mode: service:letsacme
+  traefik:
+    image: traefik:3.6.12
+    # ports:
+    #  - "9080:9080"
+    #  - "9443:9443"
+    volumes:
+      - "./traefik.yml:/etc/traefik/traefik.yaml"
+      # share config between cli and compose
+      - "./traefik_config:/data/traefik_config"
+      - "./letsacme:/data/letsacme"
+    environment:
+      - CF_DNS_API_TOKEN="letsacme_example"
+    working_dir: /data
+    # share config between cli and compose, because traefik.yaml use letsacme.localhost:3000 to access letsacme
+    network_mode: service:letsacme
+    restart: always

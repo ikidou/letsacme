@@ -1,3 +1,6 @@
+# this will generate the acme_ca.crt and acme_ca.key at ./examples/letsacme/
+# you can trust the acme_ca.crt in your system.
+
 services:
   letsacme:
     image: ikidou/letsacme
@@ -5,6 +8,6 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - "./letsacme:/data"
+      - "./examples/letsacme:/data"
     restart: always
     command: ["-https"]

@@ -1,8 +1,8 @@
 entryPoints:
   # http:
-  #   address: ":80"
+  #  address: ":80"
   https:
-    address: ":8443"
+    address: ":9443"
 
 tls:
   stores:
@@ -15,6 +15,8 @@ certificatesResolvers:
     acme:
       email: "exapmle@exapmle.com"  
       caServer: "https://letsacme.localhost:3000/acme/directory"
+      # caServerName: "letsacme.localhost"
+      caCertificates: ./letsacme/acme_ca.crt
       storage: "./traefik_store_letsacme.json"
       keyType: EC256
       dnsChallenge:
