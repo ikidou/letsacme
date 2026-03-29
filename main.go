@@ -13,6 +13,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -82,6 +83,7 @@ func main() {
 	http.HandleFunc("/acme/ca.crt", handleCACert)
 	http.HandleFunc("/", handleIndex)
 
+	log.Printf("download CA certificate from localhost:%d/acme/ca.crt", *port)
 	log.Println("letsacme started, available at:")
 	if *https {
 		for _, dns := range serverCertPair.Cert.DNSNames {
@@ -363,9 +365,21 @@ func getBaseURL(r *http.Request) string {
 	return fmt.Sprintf("%s://%s/acme", scheme, host)
 }
 
+func absPath(path string) string {
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return path
+	}
+	return absPath
+}
+
 func initCA() {
 	var err error
-	caPair, err = loadOrCreateCert(*rootCertPath, *rootKeyPath, "LetsACME Root CA RSA %s", "RSA", "", nil, false)
+	rootCertFullPath := absPath(*rootCertPath)
+	rootKeyFullPath := absPath(*rootKeyPath)
+	log.Printf("load CA crt from: %s", rootCertFullPath)
+	log.Printf("load CA key from: %s", rootKeyFullPath)
+	caPair, err = loadOrCreateCert(rootCertFullPath, rootKeyFullPath, "LetsACME Root CA RSA %s", "RSA", "", nil, false)
 	if err != nil {
 		log.Fatalf("failed to load root CA: %v", err)
 	}
@@ -385,7 +399,11 @@ func initCA() {
 		*serverCertPath = "./acme_server.crt"
 		*serverKeyPath = "./acme_server.key"
 	}
-	serverCertPair, err = loadOrCreateCert(*serverCertPath, *serverKeyPath, "LetsACME Server %s", "ECDSA", *serverName, caPair, false)
+	serverCertFullPath := absPath(*serverCertPath)
+	serverKeyFullPath := absPath(*serverKeyPath)
+	log.Printf("load server crt from: %s", serverCertFullPath)
+	log.Printf("load server key from: %s", serverKeyFullPath)
+	serverCertPair, err = loadOrCreateCert(serverCertFullPath, serverKeyFullPath, "LetsACME Server %s", "ECDSA", *serverName, caPair, false)
 	if err != nil {
 		log.Fatalf("failed to load server cert: %v", err)
 	}
