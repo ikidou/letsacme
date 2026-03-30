@@ -4,7 +4,7 @@ http:
     # Define a connection between requests and services
     traefik-dashboard:
       entryPoints:
-        - http
+        # - http
         - https
       rule: "Host(`traefik.localhost`)"
       tls:

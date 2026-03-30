@@ -9,6 +9,8 @@ Features:
 
 ## Examples
 
+check [examples/README.md](./examples/README.md) for detail
+
 ### Docker & Compose
 
 ```bash
